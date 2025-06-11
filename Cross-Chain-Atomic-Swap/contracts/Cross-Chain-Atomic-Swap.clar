@@ -26,3 +26,59 @@
 (define-constant PROTOCOL-FEE-PERCENTAGE u2)  ;; 0.2%
 (define-constant DEFAULT-QUORUM u2)  ;; Number of required signatures for multi-sig (out of 3)
 
+;; ----- Data Maps and Variables -----
+
+;; Tracks the status of each swap
+(define-map swaps
+  { swap-id: (buff 32) }
+  {
+    initiator: principal,
+    participant: principal,
+    amount: uint,
+    hash-lock: (buff 32),
+    time-lock: uint,
+    swap-token: (string-ascii 32),
+    target-chain: (string-ascii 32),
+    target-address: (buff 64),
+    claimed: bool,
+    refunded: bool,
+    multi-sig-required: uint,
+    multi-sig-provided: uint,
+    privacy-level: uint,
+    expiration-height: uint,
+    swap-fee: uint,
+    protocol-fee: uint
+  }
+)
+
+;; Stores ZK proofs for confidential transactions
+(define-map confidential-proofs
+  { swap-id: (buff 32) }
+  {
+    proof-data: (buff 1024),
+    verified: bool,
+    verification-time: uint
+  }
+)
+
+;; Tracks signers for multi-signature swaps
+(define-map multi-sig-approvals
+  { swap-id: (buff 32), signer: principal }
+  { approved: bool, signature-time: uint }
+)
+
+;; Stores mixing pools for enhanced privacy
+(define-map mixing-pools
+  { pool-id: (buff 32) }
+  {
+    total-amount: uint,
+    participant-count: uint,
+    min-amount: uint,
+    max-amount: uint,
+    activation-threshold: uint,
+    active: bool,
+    creation-height: uint,
+    execution-delay: uint,
+    execution-window: uint
+  }
+)
